@@ -17,14 +17,14 @@ namespace :pferd do
   task draw_relationships: %i[environment pferd:yard] do
     # Load the Yard registry
     YARD::Registry.load!
-    MODEL_DOMAINS = Hash.new(Pferd.configuration.default_domain_name)
-
+    MODEL_DOMAINS = {}
+    default_tag = Struct.new(:text).new(Pferd.configuration.default_domain_name)
     # Populate MODEL_DOMAINS with model names and their domains
     YARD::Registry.all(:class).each do |klass_info|
-      domain_tag = klass_info.tags.find { |tag| tag.tag_name == "domain" }
-      MODEL_DOMAINS[klass_info.name.to_s] = domain_tag.text if domain_tag
+      class_name = [klass_info.namespace, klass_info.name].join("::") if klass_info.namespace.present?
+      domain_tag = klass_info.tags.find { |tag| tag.tag_name == "domain" } || default_tag
+      MODEL_DOMAINS[class_name] = domain_tag.text
     end
-
     # Load all models
     Rails.application.eager_load!
 
