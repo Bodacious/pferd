@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
-require 'rake'
+require "rake"
 require "yard"
-require 'pferd'
-require 'graphviz'
+require "pferd"
+require "graphviz"
 
 namespace :pferd do
   # Load the models specified in config and generate their Docs
   # (this is required to get the domain tag from the doc metadata)
   YARD::Rake::YardocTask.new do |t|
-    t.files = Pferd.configuration.model_dirs.map { |dir| File.join(dir,'**', '*.rb')}
-    t.options = ['--tag', 'domain:"App domain"']
+    t.files = Pferd.configuration.model_dirs.map { |dir| File.join(dir, "**", "*.rb") }
+    t.options = ["--tag", 'domain:"App domain"']
   end
 
   desc "Generate an ERD that shows models grouped by domain"
-  task :draw_relationships => [:environment, :"pferd:yard"] do
+  task draw_relationships: %i[environment pferd:yard] do
     # Load the Yard registry
     YARD::Registry.load!
     MODEL_DOMAINS = Hash.new(Pferd.configuration.default_domain_name)
 
     # Populate MODEL_DOMAINS with model names and their domains
-    YARD::Registry.all(:class).each do |klass_info|
-      domain_tag = klass_info.tags.find { |tag| tag.tag_name == 'domain' }
+    YARD::Registry.all(:class).find_each do |klass_info|
+      domain_tag = klass_info.tags.find { |tag| tag.tag_name == "domain" }
       MODEL_DOMAINS[klass_info.name.to_s] = domain_tag.text if domain_tag
     end
 
@@ -63,11 +63,11 @@ namespace :pferd do
     entities.each do |entity|
       entity.associations.each do |relationship|
         color = if Pferd.configuration.highlight_boundary_violations && relationship.boundary_violation
-                  'red'
+                  "red"
                 else
-                  'black'
+                  "black"
                 end
-        g.add_edges(entity.name, relationship.name, color: color, style: 'dashed')
+        g.add_edges(entity.name, relationship.name, color: color, style: "dashed")
       end
     end
     # rubocop:enable Style/CombinableLoops
