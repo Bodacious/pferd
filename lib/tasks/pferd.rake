@@ -76,6 +76,7 @@ namespace :pferd do
 
     # Generate output as PNG file
     g.output(png: Pferd.configuration.output_file_name)
+    puts "Done #{Pferd.configuration.output_file_name}"
   end
   task default: :draw_relationships
 end
