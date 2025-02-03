@@ -2,6 +2,7 @@
 
 require_relative "pferd/version"
 require_relative "pferd/entity"
+require_relative "pferd/railtie" if defined?(Rails)
 require "ostruct"
 module Pferd
   class Error < StandardError; end
@@ -33,5 +34,3 @@ module Pferd
     config.highlight_boundary_violations = true
   end
 end
-# Load this last so that the Rake file has access to the above config.
-load "pferd/lib/tasks/pferd.rake"
