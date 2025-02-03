@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pferd (0.1.1)
+    pferd (0.2.0)
       ruby-graphviz
       yard
 
