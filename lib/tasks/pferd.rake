@@ -9,8 +9,8 @@ namespace :pferd do
   # Load the models specified in config and generate their Docs
   # (this is required to get the domain tag from the doc metadata)
   YARD::Rake::YardocTask.new do |t|
-    t.files = Pferd.configuration.model_dirs.map { |dir| File.join(dir, "**", "*.rb") }
-    t.options = ["--tag", 'domain:"App domain"']
+    t.files = Pferd.configuration.model_dirs.map { |dir| Rails.root.join(dir, "**", "*.rb").to_s }
+    t.options = ["--tag", 'domain:"App domain"', '--output-dir', './tmp/pferd-yard']
   end
 
   desc "Generate an ERD that shows models grouped by domain"
