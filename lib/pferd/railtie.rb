@@ -1,7 +1,7 @@
 module Pferd
   class Railtie < Rails::Railtie
     rake_tasks do
-      require "tasks/pferd.rake"
+      load "tasks/pferd.rake"
     end
   end
 end
