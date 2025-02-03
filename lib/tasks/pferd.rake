@@ -20,7 +20,7 @@ namespace :pferd do
     MODEL_DOMAINS = Hash.new(Pferd.configuration.default_domain_name)
 
     # Populate MODEL_DOMAINS with model names and their domains
-    YARD::Registry.all(:class).find_each do |klass_info|
+    YARD::Registry.all(:class).each do |klass_info|
       domain_tag = klass_info.tags.find { |tag| tag.tag_name == "domain" }
       MODEL_DOMAINS[klass_info.name.to_s] = domain_tag.text if domain_tag
     end
@@ -32,8 +32,10 @@ namespace :pferd do
       next unless MODEL_DOMAINS.key?(model.name)
 
       entity = Pferd::Entity.new(model.name, Set.new, MODEL_DOMAINS[model.name])
-      associations = (model.reflect_on_all_associations(:has_many) |
-        model.reflect_on_all_associations(:has_one))
+      associations = (
+        model.reflect_on_all_associations(:has_many) |
+        model.reflect_on_all_associations(:has_one) | model.reflect_on_all_associations(:has_and_belongs_to_many)
+      )
       associations.each do |assoc|
         next if Pferd.configuration.ignored_classes.include?(assoc.klass.name)
         next if Pferd.configuration.ignored_modules.any? do |module_name|
